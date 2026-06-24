@@ -54,8 +54,20 @@ const achievements = (r: CalcResult): Ach[] => [
   },
 ];
 
-export function Achievements({ r }: { r: CalcResult }) {
-  const list = achievements(r);
+export function Achievements({ r, earned }: { r: CalcResult; earned?: Set<string> }) {
+  const list = achievements(r).map((a) => {
+    if (!earned) return a;
+    // codes used in server-side unlockBadges
+    const codeMap: Record<string, string> = {
+      "First Mile": "first_mile",
+      "100K Scrolls": "scrolls_100k",
+      "Scroll Marathon": "scroll_marathon",
+      "10 Miles Thumb": "thumb_athlete",
+      "Endless Feed Survivor": "endless_feed",
+    };
+    const code = codeMap[a.title];
+    return code && earned.has(code) ? { ...a, unlocked: true, progress: 1 } : a;
+  });
   return (
     <section className="rounded-3xl bg-card border border-border shadow-soft p-6 lg:p-8">
       <div className="flex items-end justify-between flex-wrap gap-2">
