@@ -1,6 +1,20 @@
-import { Bell, Search, Settings2 } from "lucide-react";
+import { Bell, LogOut, Search, Settings2 } from "lucide-react";
 
-export function TopHeader() {
+interface TopHeaderProps {
+  name?: string;
+  avatarUrl?: string | null;
+  onSignOut?: () => void;
+}
+
+export function TopHeader({ name = "You", avatarUrl, onSignOut }: TopHeaderProps) {
+  const initials = name
+    .split(/\s+/)
+    .map((p) => p[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+
   return (
     <header className="h-20 px-6 lg:px-10 flex items-center justify-between gap-4 border-b border-border bg-background/70 backdrop-blur-xl sticky top-0 z-30">
       <div className="flex-1 max-w-md">
@@ -14,20 +28,37 @@ export function TopHeader() {
       </div>
       <div className="flex items-center gap-2">
         <button className="w-11 h-11 grid place-items-center rounded-xl hover:bg-muted transition relative">
-          <Bell className="w-4.5 h-4.5" />
+          <Bell className="w-4 h-4" />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-gradient-pink" />
         </button>
         <button className="w-11 h-11 grid place-items-center rounded-xl hover:bg-muted transition">
-          <Settings2 className="w-4.5 h-4.5" />
+          <Settings2 className="w-4 h-4" />
         </button>
+        {onSignOut && (
+          <button
+            onClick={onSignOut}
+            title="Sign out"
+            className="w-11 h-11 grid place-items-center rounded-xl hover:bg-muted transition"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        )}
         <div className="hidden sm:flex items-center gap-3 ml-2 pl-3 border-l border-border">
           <div className="text-right leading-tight">
-            <div className="text-sm font-semibold">Alex Carter</div>
+            <div className="text-sm font-semibold truncate max-w-[160px]">{name}</div>
             <div className="text-[11px] text-muted-foreground">Scroll Marathoner</div>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-gradient-hero grid place-items-center text-white font-semibold text-sm shadow-glow-purple">
-            AC
-          </div>
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={name}
+              className="w-10 h-10 rounded-xl object-cover shadow-glow-purple"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-xl bg-gradient-hero grid place-items-center text-white font-semibold text-sm shadow-glow-purple">
+              {initials || "U"}
+            </div>
+          )}
         </div>
       </div>
     </header>
