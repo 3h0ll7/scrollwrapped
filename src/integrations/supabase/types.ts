@@ -24,6 +24,7 @@ export type Database = {
           opens: number
           source: string
           thumb_cm: number
+          touch_scroll_events: number
           user_id: string
         }
         Insert: {
@@ -35,6 +36,8 @@ export type Database = {
           opens?: number
           source?: string
           thumb_cm?: number
+          touch_scroll_events?: number
+          touch_scroll_events?: number
           user_id: string
         }
         Update: {
@@ -78,12 +81,17 @@ export type Database = {
           created_at: string
           day: string
           id: string
+          interaction_count: number
+          max_scroll_percent: number
           screen_time_minutes: number
           sessions: number
           source: string
           thumb_cm: number
+          touch_scroll_events: number
           total_scrolls: number
           user_id: string
+          visit_count: number
+          wheel_events: number
         }
         Insert: {
           app_opens?: number
@@ -91,12 +99,17 @@ export type Database = {
           created_at?: string
           day: string
           id?: string
+          interaction_count?: number
+          max_scroll_percent?: number
           screen_time_minutes?: number
           sessions?: number
           source?: string
           thumb_cm?: number
+          touch_scroll_events?: number
           total_scrolls?: number
           user_id: string
+          visit_count?: number
+          wheel_events?: number
         }
         Update: {
           app_opens?: number
@@ -104,12 +117,17 @@ export type Database = {
           created_at?: string
           day?: string
           id?: string
+          interaction_count?: number
+          max_scroll_percent?: number
           screen_time_minutes?: number
           sessions?: number
           source?: string
           thumb_cm?: number
+          touch_scroll_events?: number
           total_scrolls?: number
           user_id?: string
+          visit_count?: number
+          wheel_events?: number
         }
         Relationships: []
       }

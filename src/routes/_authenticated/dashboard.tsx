@@ -72,8 +72,23 @@ function Dashboard() {
         thumbCm: acc.thumbCm + Number(row.thumb_cm ?? 0),
         contentCm: acc.contentCm + Number(row.content_cm ?? 0),
         screenMin: acc.screenMin + Number(row.screen_time_minutes ?? 0),
+        wheelEvents: acc.wheelEvents + Number(row.wheel_events ?? 0),
+        touchScrollEvents: acc.touchScrollEvents + Number(row.touch_scroll_events ?? 0),
+        interactions: acc.interactions + Number(row.interaction_count ?? row.app_opens ?? 0),
+        visits: acc.visits + Number(row.visit_count ?? row.sessions ?? 0),
+        maxScrollPercent: Math.max(acc.maxScrollPercent, Number(row.max_scroll_percent ?? 0)),
       }),
-      { scrolls: 0, thumbCm: 0, contentCm: 0, screenMin: 0 },
+      {
+        scrolls: 0,
+        thumbCm: 0,
+        contentCm: 0,
+        screenMin: 0,
+        wheelEvents: 0,
+        touchScrollEvents: 0,
+        interactions: 0,
+        visits: 0,
+        maxScrollPercent: 0,
+      },
     );
   }, [data?.daily]);
 
@@ -148,19 +163,19 @@ function Dashboard() {
             <DataSourceBadge source={source} />
             <span className="text-xs text-muted-foreground">
               {source === "verified"
-                ? "Powered by your device's real screen-time data."
-                : "Based on your inputs below. Connect a companion app for verified data."}
+                ? "Powered by verified browser analytics captured while you use ScrollMiles."
+                : "Based on your inputs below until browser tracking records your first verified event."}
             </span>
           </div>
 
           <div className="grid xl:grid-cols-[1fr_340px] gap-6 lg:gap-8">
             <div className="space-y-6 lg:space-y-8 min-w-0">
               <HeroCard r={merged} />
-              <GradientStats r={merged} />
+              <GradientStats r={merged} verified={verifiedTotals.scrolls > 0 || verifiedTotals.contentCm > 0} />
               <ScrollChart r={merged} />
             </div>
             <div className="space-y-6">
-              <ActivitySidebar r={merged} />
+              <ActivitySidebar analytics={verifiedTotals} />
               <IngestCard token={profile?.ingest_token ?? ""} />
             </div>
           </div>
@@ -235,10 +250,10 @@ function IngestCard({ token }: { token: string }) {
   return (
     <section className="rounded-3xl border border-dashed border-border bg-surface p-5">
       <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        Connect real device data
+        Verified web tracking
       </div>
       <p className="text-sm mt-2 text-foreground/80 leading-relaxed">
-        Use this token in the ScrollMiles companion app (Android / iOS) to upload verified Digital Wellbeing & Screen Time data.
+        ScrollMiles now records authenticated browser analytics automatically. Keep this token for optional mobile imports.
       </p>
       <div className="mt-3 flex items-center gap-2 p-2 rounded-lg bg-muted">
         <code className="text-[11px] flex-1 truncate font-mono">{token || "—"}</code>
