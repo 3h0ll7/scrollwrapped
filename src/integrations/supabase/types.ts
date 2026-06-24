@@ -14,7 +14,177 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      app_metrics: {
+        Row: {
+          app_id: string
+          day: string
+          estimated_scrolls: number
+          id: string
+          minutes: number
+          opens: number
+          source: string
+          thumb_cm: number
+          user_id: string
+        }
+        Insert: {
+          app_id: string
+          day: string
+          estimated_scrolls?: number
+          id?: string
+          minutes?: number
+          opens?: number
+          source?: string
+          thumb_cm?: number
+          user_id: string
+        }
+        Update: {
+          app_id?: string
+          day?: string
+          estimated_scrolls?: number
+          id?: string
+          minutes?: number
+          opens?: number
+          source?: string
+          thumb_cm?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      badges: {
+        Row: {
+          code: string
+          id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          id?: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      daily_metrics: {
+        Row: {
+          app_opens: number
+          content_cm: number
+          created_at: string
+          day: string
+          id: string
+          screen_time_minutes: number
+          sessions: number
+          source: string
+          thumb_cm: number
+          total_scrolls: number
+          user_id: string
+        }
+        Insert: {
+          app_opens?: number
+          content_cm?: number
+          created_at?: string
+          day: string
+          id?: string
+          screen_time_minutes?: number
+          sessions?: number
+          source?: string
+          thumb_cm?: number
+          total_scrolls?: number
+          user_id: string
+        }
+        Update: {
+          app_opens?: number
+          content_cm?: number
+          created_at?: string
+          day?: string
+          id?: string
+          screen_time_minutes?: number
+          sessions?: number
+          source?: string
+          thumb_cm?: number
+          total_scrolls?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      insights: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          kind: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          kind?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          kind?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          age: number | null
+          avatar_url: string | null
+          created_at: string
+          daily_screen_time_hours: number | null
+          data_source: string
+          display_name: string | null
+          email: string | null
+          id: string
+          ingest_token: string
+          onboarded: boolean
+          social_media_hours: number | null
+          updated_at: string
+          years_owning_smartphone: number | null
+        }
+        Insert: {
+          age?: number | null
+          avatar_url?: string | null
+          created_at?: string
+          daily_screen_time_hours?: number | null
+          data_source?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+          ingest_token?: string
+          onboarded?: boolean
+          social_media_hours?: number | null
+          updated_at?: string
+          years_owning_smartphone?: number | null
+        }
+        Update: {
+          age?: number | null
+          avatar_url?: string | null
+          created_at?: string
+          daily_screen_time_hours?: number | null
+          data_source?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          ingest_token?: string
+          onboarded?: boolean
+          social_media_hours?: number | null
+          updated_at?: string
+          years_owning_smartphone?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
