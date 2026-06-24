@@ -3,7 +3,7 @@ import { LayoutDashboard, BarChart3, Activity, Trophy, FileText, Settings, Spark
 import { cn } from "@/lib/utils";
 
 const items = [
-  { label: "Dashboard", to: "/", icon: LayoutDashboard },
+  { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
   { label: "Analytics", to: "/analytics", icon: BarChart3 },
   { label: "Activity", to: "/activity", icon: Activity },
   { label: "Achievements", to: "/achievements", icon: Trophy },
@@ -11,8 +11,34 @@ const items = [
   { label: "Settings", to: "/settings", icon: Settings },
 ];
 
-export function Sidebar() {
+function NavItems({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  return (
+    <>
+      {items.map((it) => {
+        const active = pathname === it.to;
+        return (
+          <Link
+            key={it.to}
+            to={it.to}
+            onClick={onNavigate}
+            className={cn(
+              "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all",
+              active
+                ? "bg-gradient-hero text-white shadow-glow-purple"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+            )}
+          >
+            <it.icon className="w-4.5 h-4.5" strokeWidth={2} />
+            {it.label}
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+
+export function Sidebar() {
   return (
     <aside className="hidden lg:flex lg:flex-col w-64 shrink-0 border-r border-border bg-surface/60 backdrop-blur-xl">
       <div className="flex items-center gap-2.5 px-6 h-20 border-b border-border">
@@ -25,24 +51,7 @@ export function Sidebar() {
         </div>
       </div>
       <nav className="flex-1 px-4 py-6 space-y-1">
-        {items.map((it) => {
-          const active = pathname === it.to;
-          return (
-            <Link
-              key={it.to}
-              to={it.to}
-              className={cn(
-                "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all",
-                active
-                  ? "bg-gradient-hero text-white shadow-glow-purple"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              )}
-            >
-              <it.icon className="w-4.5 h-4.5" strokeWidth={2} />
-              {it.label}
-            </Link>
-          );
-        })}
+        <NavItems />
       </nav>
       <div className="m-4 p-4 rounded-2xl bg-gradient-soft border border-border">
         <div className="text-xs font-semibold text-foreground">Pro insights</div>
@@ -54,5 +63,16 @@ export function Sidebar() {
         </button>
       </div>
     </aside>
+  );
+}
+
+
+export function MobileSidebar() {
+  return (
+    <nav className="lg:hidden sticky top-20 z-20 border-b border-border bg-background/90 backdrop-blur-xl px-4 py-3">
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        <NavItems />
+      </div>
+    </nav>
   );
 }

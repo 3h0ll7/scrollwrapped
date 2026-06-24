@@ -1,9 +1,8 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Sidebar } from "@/components/dashboard/sidebar";
-import { TopHeader } from "@/components/dashboard/top-header";
+import { DashboardLayout } from "@/components/dashboard/dashboard-layout";
 import { HeroCard } from "@/components/dashboard/hero-card";
 import { GradientStats } from "@/components/dashboard/gradient-stats";
 import { ScrollChart } from "@/components/dashboard/scroll-chart";
@@ -24,7 +23,6 @@ import {
   unlockBadges,
 } from "@/lib/dashboard.functions";
 import { useScrollTracker } from "@/hooks/use-scroll-tracker";
-import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, Loader2, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -35,7 +33,6 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
-  const navigate = useNavigate();
   const qc = useQueryClient();
   const getData = useServerFn(getDashboardData);
   const saveInputs = useServerFn(saveCalculatorInputs);
@@ -129,13 +126,6 @@ function Dashboard() {
     saveMut.mutate(next);
   }
 
-  async function signOut() {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  }
-
   if (isLoading) {
     return (
       <div className="min-h-screen grid place-items-center bg-background">
@@ -150,14 +140,7 @@ function Dashboard() {
   const earnedBadges = new Set((data?.badges ?? []).map((b) => b.code));
 
   return (
-    <div className="min-h-screen flex bg-background">
-      <Sidebar />
-      <div className="flex-1 min-w-0 flex flex-col">
-        <TopHeader
-          name={profile?.display_name ?? profile?.email ?? "You"}
-          avatarUrl={profile?.avatar_url ?? null}
-          onSignOut={signOut}
-        />
+    <DashboardLayout name={profile?.display_name ?? profile?.email ?? "You"} avatarUrl={profile?.avatar_url ?? null}>
         <main className="flex-1 p-6 lg:p-10 space-y-6 lg:space-y-8">
           <div className="flex flex-wrap items-center gap-3">
             <DataSourceBadge source={source} />
@@ -194,8 +177,7 @@ function Dashboard() {
             ScrollMiles © {new Date().getFullYear()} — Real data when available, transparent estimates otherwise.
           </footer>
         </main>
-      </div>
-    </div>
+    </DashboardLayout>
   );
 }
 
