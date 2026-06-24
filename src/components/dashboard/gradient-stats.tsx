@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Hand, Eye, MousePointerClick, Smartphone, TrendingUp } from "lucide-react";
+import { Hand, Eye, MousePointerClick, Smartphone, ShieldCheck } from "lucide-react";
 import { formatMiles, formatNumber, type CalcResult } from "@/lib/scrollmiles";
 
 const cards = (r: CalcResult) => [
@@ -11,7 +11,6 @@ const cards = (r: CalcResult) => [
     icon: Hand,
     gradient: "bg-gradient-purple",
     glow: "shadow-glow-purple",
-    trend: "+12.4%",
   },
   {
     title: "Content Distance",
@@ -21,7 +20,6 @@ const cards = (r: CalcResult) => [
     icon: Eye,
     gradient: "bg-gradient-blue",
     glow: "shadow-glow-blue",
-    trend: "+8.1%",
   },
   {
     title: "Lifetime Scrolls",
@@ -31,7 +29,6 @@ const cards = (r: CalcResult) => [
     icon: MousePointerClick,
     gradient: "bg-gradient-pink",
     glow: "shadow-glow-pink",
-    trend: "+3.2%",
   },
   {
     title: "Screen Time",
@@ -41,11 +38,10 @@ const cards = (r: CalcResult) => [
     icon: Smartphone,
     gradient: "bg-gradient-purple",
     glow: "shadow-glow-purple",
-    trend: "+5.6%",
   },
 ];
 
-export function GradientStats({ r }: { r: CalcResult }) {
+export function GradientStats({ r, verified }: { r: CalcResult; verified: boolean }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       {cards(r).map((c, i) => (
@@ -62,8 +58,8 @@ export function GradientStats({ r }: { r: CalcResult }) {
               <c.icon className="w-4.5 h-4.5" />
             </div>
             <div className="inline-flex items-center gap-1 text-[11px] font-semibold bg-white/15 backdrop-blur px-2 py-1 rounded-full">
-              <TrendingUp className="w-3 h-3" />
-              {c.trend}
+              {verified ? <ShieldCheck className="w-3 h-3" /> : null}
+              {verified ? "Verified Web Data" : "Estimated"}
             </div>
           </div>
           <div className="relative mt-6">

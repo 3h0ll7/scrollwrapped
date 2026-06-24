@@ -65,21 +65,25 @@ export const saveCalculatorInputs = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
-const ScrollPing = z.object({
-  scrolls: z.number().int().min(1).max(100000),
-  thumb_cm: z.number().min(0).max(1_000_000),
-  content_cm: z.number().min(0).max(10_000_000),
-  seconds_active: z.number().min(0).max(86400),
+const WebAnalyticsPing = z.object({
+  wheel_events: z.number().int().min(0).max(1_000_000),
+  touch_scroll_events: z.number().int().min(0).max(1_000_000),
+  session_seconds: z.number().min(0).max(86_400),
+  daily_visits: z.number().int().min(0).max(100),
+  interaction_count: z.number().int().min(0).max(1_000_000),
+  page_scroll_cm: z.number().min(0).max(10_000_000),
+  max_scroll_percent: z.number().min(0).max(100),
 });
 
-export const recordWebScrolls = createServerFn({ method: "POST" })
+export const recordWebAnalytics = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: unknown) => ScrollPing.parse(input))
+  .inputValidator((input: unknown) => WebAnalyticsPing.parse(input))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const today = new Date().toISOString().slice(0, 10);
+    const totalScrollEvents = data.wheel_events + data.touch_scroll_events;
 
-    const { data: existing } = await supabase
+    const { data: existing, error: selectError } = await supabase
       .from("daily_metrics")
       .select("*")
       .eq("user_id", userId)
@@ -87,30 +91,48 @@ export const recordWebScrolls = createServerFn({ method: "POST" })
       .eq("source", "web")
       .maybeSingle();
 
+    if (selectError) throw new Error(selectError.message);
+
     if (existing) {
-      await supabase
+      const { error } = await supabase
         .from("daily_metrics")
         .update({
-          total_scrolls: existing.total_scrolls + data.scrolls,
-          thumb_cm: Number(existing.thumb_cm) + data.thumb_cm,
-          content_cm: Number(existing.content_cm) + data.content_cm,
-          screen_time_minutes: Number(existing.screen_time_minutes) + data.seconds_active / 60,
-          sessions: existing.sessions + 1,
+          total_scrolls: existing.total_scrolls + totalScrollEvents,
+          thumb_cm: Number(existing.thumb_cm) + data.page_scroll_cm,
+          content_cm: Number(existing.content_cm) + data.page_scroll_cm,
+          screen_time_minutes: Number(existing.screen_time_minutes) + data.session_seconds / 60,
+          sessions: Number(existing.sessions ?? 0) + data.daily_visits,
+          app_opens: Number(existing.app_opens ?? 0) + data.interaction_count,
+          wheel_events: Number(existing.wheel_events ?? 0) + data.wheel_events,
+          touch_scroll_events: Number(existing.touch_scroll_events ?? 0) + data.touch_scroll_events,
+          interaction_count: Number(existing.interaction_count ?? 0) + data.interaction_count,
+          visit_count: Number(existing.visit_count ?? 0) + data.daily_visits,
+          max_scroll_percent: Math.max(Number(existing.max_scroll_percent ?? 0), data.max_scroll_percent),
         })
         .eq("id", existing.id);
+      if (error) throw new Error(error.message);
     } else {
-      await supabase.from("daily_metrics").insert({
+      const { error } = await supabase.from("daily_metrics").insert({
         user_id: userId,
         day: today,
-        total_scrolls: data.scrolls,
-        thumb_cm: data.thumb_cm,
-        content_cm: data.content_cm,
-        screen_time_minutes: data.seconds_active / 60,
-        sessions: 1,
-        app_opens: 0,
+        total_scrolls: totalScrollEvents,
+        thumb_cm: data.page_scroll_cm,
+        content_cm: data.page_scroll_cm,
+        screen_time_minutes: data.session_seconds / 60,
+        sessions: data.daily_visits,
+        app_opens: data.interaction_count,
+        wheel_events: data.wheel_events,
+        touch_scroll_events: data.touch_scroll_events,
+        interaction_count: data.interaction_count,
+        visit_count: data.daily_visits,
+        max_scroll_percent: data.max_scroll_percent,
         source: "web",
       });
+      if (error) throw new Error(error.message);
     }
+
+    await supabase.from("profiles").update({ data_source: "verified" }).eq("id", userId);
+
     return { ok: true };
   });
 
