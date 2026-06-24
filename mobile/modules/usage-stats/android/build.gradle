@@ -1,0 +1,9 @@
+apply plugin: 'com.android.library'
+apply plugin: 'org.jetbrains.kotlin.android'
+
+group = 'expo.modules.usagestats'
+version = '1.0.0'
+
+android { namespace 'expo.modules.usagestats'; compileSdk 35
+  defaultConfig { minSdk 24; targetSdk 35 }
+}
