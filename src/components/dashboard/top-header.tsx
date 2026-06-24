@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Bell, LogOut, Search, Settings2 } from "lucide-react";
 
 interface TopHeaderProps {
@@ -31,9 +32,9 @@ export function TopHeader({ name = "You", avatarUrl, onSignOut }: TopHeaderProps
           <Bell className="w-4 h-4" />
           <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-gradient-pink" />
         </button>
-        <button className="w-11 h-11 grid place-items-center rounded-xl hover:bg-muted transition">
+        <Link to="/settings" className="w-11 h-11 grid place-items-center rounded-xl hover:bg-muted transition" aria-label="Settings">
           <Settings2 className="w-4 h-4" />
-        </button>
+        </Link>
         {onSignOut && (
           <button
             onClick={onSignOut}
