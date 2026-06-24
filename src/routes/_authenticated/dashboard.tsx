@@ -25,7 +25,7 @@ import {
 } from "@/lib/dashboard.functions";
 import { useScrollTracker } from "@/hooks/use-scroll-tracker";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, Loader2, Copy, Check } from "lucide-react";
+import { Sparkles, Loader2, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
@@ -176,7 +176,7 @@ function Dashboard() {
             </div>
             <div className="space-y-6">
               <ActivitySidebar analytics={verifiedTotals} />
-              <IngestCard token={profile?.ingest_token ?? ""} />
+              <IngestCard />
             </div>
           </div>
 
@@ -245,29 +245,19 @@ function AiInsights({
   );
 }
 
-function IngestCard({ token }: { token: string }) {
-  const [copied, setCopied] = useState(false);
+function IngestCard() {
   return (
     <section className="rounded-3xl border border-dashed border-border bg-surface p-5">
       <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        Verified web tracking
+        Connect real device data
       </div>
       <p className="text-sm mt-2 text-foreground/80 leading-relaxed">
-        ScrollMiles now records authenticated browser analytics automatically. Keep this token for optional mobile imports.
+        ScrollMiles records authenticated browser analytics automatically. Device ingestion tokens are hidden and never
+        rendered in the dashboard, settings, public routes, debug panels, logs, or screenshots.
       </p>
-      <div className="mt-3 flex items-center gap-2 p-2 rounded-lg bg-muted">
-        <code className="text-[11px] flex-1 truncate font-mono">{token || "—"}</code>
-        <button
-          onClick={() => {
-            if (!token) return;
-            navigator.clipboard.writeText(token);
-            setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
-          }}
-          className="h-7 w-7 grid place-items-center rounded-md hover:bg-background transition"
-        >
-          {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
-        </button>
+      <div className="mt-3 flex items-center gap-2 p-2 rounded-lg bg-muted" aria-label="Device ingestion token hidden">
+        <ShieldCheck className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+        <code className="text-[11px] flex-1 truncate font-mono">Token Hidden For Security</code>
       </div>
       <p className="text-[11px] mt-3 text-muted-foreground">
         Endpoint: <code className="font-mono">POST /api/public/ingest</code>
