@@ -15,7 +15,13 @@ export const getDashboardData = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
 
     const [profileRes, dailyRes, appsRes, badgesRes, insightsRes] = await Promise.all([
-      supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+      supabase
+        .from("profiles")
+        .select(
+          "id,email,display_name,avatar_url,age,years_owning_smartphone,daily_screen_time_hours,social_media_hours,onboarded,data_source,created_at,updated_at",
+        )
+        .eq("id", userId)
+        .maybeSingle(),
       supabase
         .from("daily_metrics")
         .select("*")
@@ -156,7 +162,13 @@ export const generateInsights = createServerFn({ method: "POST" })
         .eq("user_id", userId)
         .order("day", { ascending: false })
         .limit(60),
-      supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+      supabase
+        .from("profiles")
+        .select(
+          "id,email,display_name,avatar_url,age,years_owning_smartphone,daily_screen_time_hours,social_media_hours,onboarded,data_source,created_at,updated_at",
+        )
+        .eq("id", userId)
+        .maybeSingle(),
     ]);
 
     const summary = {
